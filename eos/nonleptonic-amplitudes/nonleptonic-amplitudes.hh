@@ -133,5 +133,54 @@ namespace eos
             static OptionSpecification                           option_specification(const qnp::Prefix & process);
             static OptionSpecification                           option_specification();
     };
+
+    /* P -> DP transitions, with D a charmed and P a light pseudoscalar */
+    template <> class NonleptonicAmplitudes<PToDP> : public virtual ParameterUser
+    {
+        public:
+            virtual ~NonleptonicAmplitudes();
+
+            // Amplitude for B -> D P; unlike in B -> PP, the two final-state mesons are distinguishable
+            // and the amplitude is therefore not symmetrized
+            virtual complex<double> amplitude() const = 0;
+
+            // Pseudo-observables given for testing purposes
+            double
+            re_amplitude() const
+            {
+                return real(amplitude());
+            }
+
+            double
+            im_amplitude() const
+            {
+                return imag(amplitude());
+            }
+
+            double
+            abs_amplitude() const
+            {
+                return abs(amplitude());
+            }
+
+            double
+            arg_amplitude() const
+            {
+                return arg(amplitude());
+            }
+    };
+
+    template <> class NonleptonicAmplitudeFactory<PToDP>
+    {
+        public:
+            using KeyType   = QualifiedName;
+            using ValueType = std::function<NonleptonicAmplitudes<PToDP> *(const Parameters &, const Options &)>;
+
+            static const std::map<KeyType, ValueType> amplitudes;
+
+            static std::shared_ptr<NonleptonicAmplitudes<PToDP>> create(const QualifiedName & name, const Parameters & parameters, const Options & options = Options{});
+            static OptionSpecification                           option_specification(const qnp::Prefix & process);
+            static OptionSpecification                           option_specification();
+    };
 } // namespace eos
 #endif

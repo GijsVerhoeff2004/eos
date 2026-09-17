@@ -129,5 +129,94 @@ namespace eos
             // Amplitude for B -> P2 P1
             complex<double> inverse_amplitude() const;
     };
+
+    template <> class QCDFRepresentation<PToDP> : public NonleptonicAmplitudes<PToDP>
+    {
+        private:
+            std::shared_ptr<Model> model;
+            // spectator flavour of the decaying B_q meson
+            QuarkFlavorOption      opt_q;
+            // light antiquark flavour of the charmed meson D_q
+            QuarkFlavorOption      opt_D;
+            LightMesonOption       opt_p;
+            BooleanOption          opt_cp_conjugate;
+            BooleanOption          opt_B_bar;
+
+            UsedParameter theta_18;
+
+            su3f::rank1                  B, D;
+            mutable su3f::rank2          P;
+            std::function<su3f::rank1()> Lambda;
+
+            UsedParameter Gfermi;
+            UsedParameter mB;
+            UsedParameter mB_q_0;
+            UsedParameter mD;
+            UsedParameter mP;
+            UsedParameter FD;
+            UsedParameter FP;
+            UsedParameter fB;
+            UsedParameter fD;
+            UsedParameter fP;
+
+            // b -> c ubar q proceeds through current-current operators only, hence no penguin coefficients arise
+            UsedParameter re_alpha1, im_alpha1;
+            UsedParameter re_alpha2, im_alpha2;
+            UsedParameter re_b1, im_b1;
+
+            static const std::vector<OptionSpecification> options;
+
+            std::function<complex<double>()> lamd;
+            std::function<complex<double>()> lams;
+
+        public:
+            QCDFRepresentation(const Parameters & p, const Options & o);
+
+            ~QCDFRepresentation() {}
+
+            inline void
+            update() const
+            {
+                const double theta_18 = this->theta_18.evaluate();
+                su3f::psd_octet.find(opt_p.value())->second(theta_18, P);
+
+                if (opt_B_bar.value())
+                {
+                    su3f::transpose(P);
+                }
+            }
+
+            static NonleptonicAmplitudes<PToDP> * make(const Parameters &, const Options &);
+
+            // Helper functions; the light meson is emitted from the weak vertex in the colour-allowed case,
+            // the charmed meson in the colour-suppressed case
+            complex<double> colour_allowed_amplitude(su3f::rank2 & p) const;
+            complex<double> colour_suppressed_amplitude(su3f::rank2 & p) const;
+            complex<double> annihilation_amplitude(su3f::rank2 & p) const;
+
+            // Diagnostic functions
+            complex<double>
+            colour_allowed_amplitude() const
+            {
+                update();
+                return colour_allowed_amplitude(P);
+            }
+
+            complex<double>
+            colour_suppressed_amplitude() const
+            {
+                update();
+                return colour_suppressed_amplitude(P);
+            }
+
+            complex<double>
+            annihilation_amplitude() const
+            {
+                update();
+                return annihilation_amplitude(P);
+            }
+
+            complex<double> amplitude() const override;
+    };
 } // namespace eos
 #endif

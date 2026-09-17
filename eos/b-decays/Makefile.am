@@ -7,6 +7,7 @@ AM_LDLAGS = @AM_LDFLAGS@
 lib_LTLIBRARIES = libeosbdecays.la
 libeosbdecays_la_SOURCES = \
 	b-to-d-l-x-nu.cc b-to-d-l-x-nu.hh \
+	b-to-d-psd.cc b-to-d-psd.hh \
 	b-to-gamma-l-nu.cc b-to-gamma-l-nu.hh \
 	b-to-l-nu.cc b-to-l-nu.hh \
 	b-to-3l-nu.cc b-to-3l-nu.hh \
@@ -42,6 +43,7 @@ libeosbdecays_la_LIBADD = \
 include_eos_bdecaysdir = $(includedir)/eos/b-decays
 include_eos_bdecays_HEADERS = \
 	b-to-d-l-x-nu.hh \
+	b-to-d-psd.hh \
 	b-to-gamma-l-nu.hh \
 	b-to-l-nu.hh \
 	b-to-3l-nu.hh \
@@ -72,6 +74,7 @@ TESTS = \
 	b-to-d-l-nu_TEST \
 	b-to-dstar-l-nu_TEST \
 	b-to-eta-l-nu_TEST \
+	b-to-d-psd_TEST \
 	b-to-gamma-l-nu_TEST \
 	b-to-pi-l-nu_TEST \
 	b-to-pi-pi-l-nu_TEST \
@@ -117,6 +120,8 @@ b_to_pi_pi_l_nu_TEST_SOURCES = b-to-pi-pi-l-nu_TEST.cc
 b_to_pi_pi_pw_l_nu_TEST_SOURCES = b-to-pi-pi-pw-l-nu_TEST.cc
 
 b_to_psd_psd_TEST_SOURCES = b-to-psd-psd_TEST.cc
+
+b_to_d_psd_TEST_SOURCES = b-to-d-psd_TEST.cc
 
 b_to_rho_l_nu_TEST_SOURCES = b-to-rho-l-nu_TEST.cc
 

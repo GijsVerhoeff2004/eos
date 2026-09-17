@@ -343,4 +343,146 @@ namespace eos
 
         return power_of<2>(mB()) * FP2() * fP1() / (1 - power_of<2>(mP1() / mB_q_0())) * this->alpha_amplitude(P2, P1) + fB() * fP1() * fP2() * this->b_amplitude(P2, P1);
     }
+
+    NonleptonicAmplitudes<PToDP> *
+    QCDFRepresentation<PToDP>::make(const Parameters & p, const Options & o)
+    {
+        return new QCDFRepresentation<PToDP>(p, o);
+    }
+
+    QCDFRepresentation<PToDP>::QCDFRepresentation(const Parameters & p, const Options & o) :
+        model(Model::make(o.get("model"_ok, "SM"_ov), p, o)),
+        opt_q(o, options, "q"_ok),
+        opt_D(o, options, "D"_ok),
+        opt_p(o, options, "P"_ok),
+        opt_cp_conjugate(o, options, "cp-conjugate"_ok),
+        opt_B_bar(o, options, "B-bar"_ok),
+        theta_18(p["eta::theta_18"], *this),
+        B(su3f::psd_b_triplet.find(opt_q.value())->second),
+        // the light antiquark of D_q transforms like the spectator antiquark of B_q
+        D(su3f::psd_b_triplet.find(opt_D.value())->second),
+        P{ {} },
+        Gfermi(p["WET::G_Fermi"], *this),
+        mB(p["mass::B_" + opt_q.str()], *this),
+        mB_q_0(p["mass::B_" + opt_q.str() + ",0@HME"], *this),
+        mD(p["mass::D_" + opt_D.str()], *this),
+        mP(p["mass::" + opt_p.str()], *this),
+        FD(p["B_" + opt_q.str() + "->D_" + opt_D.str() + "::f_+(0)"], *this),
+        FP(p["B_" + opt_q.str() + "->" + opt_p.str() + "::f_+(0)"], *this),
+        fB(p["decay-constant::B_" + opt_q.str()], *this),
+        fD(p["decay-constant::D_" + opt_D.str()], *this),
+        fP(p["decay-constant::" + opt_p.str()], *this),
+
+        re_alpha1(p["nonleptonic::Re{alpha1}@QCDF-DP"], *this),
+        im_alpha1(p["nonleptonic::Im{alpha1}@QCDF-DP"], *this),
+        re_alpha2(p["nonleptonic::Re{alpha2}@QCDF-DP"], *this),
+        im_alpha2(p["nonleptonic::Im{alpha2}@QCDF-DP"], *this),
+        re_b1(p["nonleptonic::Re{b1}@QCDF-DP"], *this),
+        im_b1(p["nonleptonic::Im{b1}@QCDF-DP"], *this)
+    {
+        Context ctx("When constructing B->DP QCD amplitudes");
+
+        if (opt_cp_conjugate.value() != opt_B_bar.value())
+        {
+            lamd = [this]() { return model->ckm_cb() * conj(model->ckm_ud()); };
+            lams = [this]() { return model->ckm_cb() * conj(model->ckm_us()); };
+        }
+        else
+        {
+            lamd = [this]() { return conj(model->ckm_cb()) * model->ckm_ud(); };
+            lams = [this]() { return conj(model->ckm_cb()) * model->ckm_us(); };
+        }
+
+        Lambda = [this]()
+        {
+            return su3f::rank1{
+                { 0.0, lamd(), lams() }
+            };
+        };
+    }
+
+    const std::vector<OptionSpecification> QCDFRepresentation<PToDP>::options{
+        Model::option_specification(),
+        { "cp-conjugate"_ok, { "true"_ov, "false"_ov }, "false"_ov },
+        { "B-bar"_ok, { "true"_ov, "false"_ov }, "false"_ov },
+        { "q"_ok, { "u"_ov, "d"_ov, "s"_ov } },
+        { "D"_ok, { "u"_ov, "d"_ov, "s"_ov } },
+        { "P"_ok, { "pi^0"_ov, "pi^+"_ov, "pi^-"_ov, "K_d"_ov, "Kbar_d"_ov, "K_S"_ov, "K_u"_ov, "Kbar_u"_ov, "eta"_ov, "eta_prime"_ov } },
+    };
+
+    complex<double>
+    QCDFRepresentation<PToDP>::colour_allowed_amplitude(su3f::rank2 & p) const
+    {
+        // The B -> D transition keeps the spectator antiquark, the light meson carries the ubar from the weak vertex
+        complex<double> result = 0.0;
+
+        const auto Lambda = this->Lambda();
+
+        for (unsigned i = 0; i < 3; i++)
+        {
+            for (unsigned j = 0; j < 3; j++)
+            {
+                result += B[i] * D[i] * p[j][0] * Lambda[j];
+            }
+        }
+
+        return result;
+    }
+
+    complex<double>
+    QCDFRepresentation<PToDP>::colour_suppressed_amplitude(su3f::rank2 & p) const
+    {
+        // Only D_u = D^0 can be emitted from the weak vertex, the light meson carries the spectator antiquark
+        complex<double> result = 0.0;
+
+        const auto Lambda = this->Lambda();
+
+        for (unsigned i = 0; i < 3; i++)
+        {
+            for (unsigned j = 0; j < 3; j++)
+            {
+                result += B[i] * D[0] * p[j][i] * Lambda[j];
+            }
+        }
+
+        return result;
+    }
+
+    complex<double>
+    QCDFRepresentation<PToDP>::annihilation_amplitude(su3f::rank2 & p) const
+    {
+        // Both valence quarks of the B meson enter the weak vertex, the final-state mesons share a popped pair
+        complex<double> result = 0.0;
+
+        const auto Lambda = this->Lambda();
+
+        for (unsigned i = 0; i < 3; i++)
+        {
+            for (unsigned k = 0; k < 3; k++)
+            {
+                result += B[i] * Lambda[i] * D[k] * p[k][0];
+            }
+        }
+
+        return result;
+    }
+
+    complex<double>
+    QCDFRepresentation<PToDP>::amplitude() const
+    {
+        this->update();
+
+        const complex<double> alpha1 = complex<double>(this->re_alpha1(), this->im_alpha1()), alpha2 = complex<double>(this->re_alpha2(), this->im_alpha2()),
+                              b1 = complex<double>(this->re_b1(), this->im_b1());
+
+        // The B -> D form factor is evaluated at q^2 = mP^2 and the B -> P form factor at q^2 = mD^2;
+        // the former extrapolation is negligible and is not carried out here
+        const double FD_at_mP2 = FD();
+        const double FP_at_mD2 = FP() / (1.0 - power_of<2>(mD() / mB_q_0()));
+
+        return complex<double>(0.0, 1.0) * Gfermi() / sqrt(2.0)
+               * (alpha1 * (power_of<2>(mB()) - power_of<2>(mD())) * FD_at_mP2 * fP() * this->colour_allowed_amplitude(P)
+                  + alpha2 * (power_of<2>(mB()) - power_of<2>(mP())) * FP_at_mD2 * fD() * this->colour_suppressed_amplitude(P)
+                  + b1 * fB() * fD() * fP() * this->annihilation_amplitude(P));
+    }
 } // namespace eos

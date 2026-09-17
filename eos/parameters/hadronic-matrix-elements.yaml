@@ -1842,6 +1842,14 @@ groups:
           max:      0.00041208157
           latex:    '\tilde{\chi}_T^1'
           unit:     'GeV^-2'
+      'B->D::f_+(0)' :
+          alias_of: [ 'B_u->D_u::f_+(0)', 'B_u->D_d::f_+(0)', 'B_u->D_s::f_+(0)', 'B_d->D_u::f_+(0)', 'B_d->D_d::f_+(0)', 'B_d->D_s::f_+(0)', 'B_s->D_u::f_+(0)', 'B_s->D_d::f_+(0)', 'B_s->D_s::f_+(0)' ]
+          central: +0.66
+          min:     +0.62
+          max:     +0.69
+          latex:    'f_+^{B\to D}(0)'
+          unit:     '1'
+          comments: 'cf. [BIvD:2016A]'
       # form factor parameters for B->D from [BIvD:2016A] for [BCL:2008A] parametrization
       'B->D::f_+(0)@BCL2008' :
           central: +0.66
@@ -9444,6 +9452,21 @@ groups:
                 "alpha4_u", "alpha4_c", "b3_u", "b3_c", "b4_u", "b4_c", "bS3_u",
                 "bS3_c", "bS4_u", "bS4_c", "alpha3EW_u", "alpha3EW_c", "alpha4EW_u", "alpha4EW_c",
                 "b3EW_u", "b3EW_c", "bS3EW_u", "bS3EW_c", "b4EW_u", "b4EW_c",  "bS4EW_u", "bS4EW_c"]
+      # QCDF coefficients for B -> D P; b -> c ubar q is mediated by current-current operators only
+      'nonleptonic::%1%{%2%}@QCDF-DP' :
+          central:  0.0
+          min:     -1.0
+          max:     +1.0
+          unit:     '1'
+          latex:
+            template: '\mathrm{%1%}\,%2%'
+            map:
+              'alpha1'    :  '\alpha_1'
+              'alpha2'    :  '\alpha_2'
+              'b1'        :  'b_1'
+          matrix:
+            - [ "Re", "Im" ]
+            - [ "alpha1", "alpha2", "b1" ]
   # }}}
 
   # Two-hadron form factors

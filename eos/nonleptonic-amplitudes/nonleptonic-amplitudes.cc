@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2024 Méril Reboud
- * Copyright (c) 2025 Danny van Dyk
+ * Copyright (c) 2025-2026 Danny van Dyk
  *
  * This file is part of the EOS project. EOS is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -134,6 +134,59 @@ namespace eos
     {
         std::set<std::string> allowed_values;
         for (const auto & ff : NonleptonicAmplitudeFactory<PToPP>::amplitudes)
+        {
+            allowed_values.insert(std::get<0>(ff).name_part().str());
+        }
+
+        OptionSpecification result{ "representation"_ok, std::vector<qnp::OptionValue>(allowed_values.cbegin(), allowed_values.cend()) };
+        return result;
+    }
+
+    NonleptonicAmplitudes<PToDP>::~NonleptonicAmplitudes(){};
+
+    const std::map<NonleptonicAmplitudeFactory<PToDP>::KeyType, NonleptonicAmplitudeFactory<PToDP>::ValueType> NonleptonicAmplitudeFactory<PToDP>::amplitudes{
+        { "B->DP::QCDF", &QCDFRepresentation<PToDP>::make }
+    };
+
+    std::shared_ptr<NonleptonicAmplitudes<PToDP>>
+    NonleptonicAmplitudeFactory<PToDP>::create(const QualifiedName & name, const Parameters & parameters, const Options & options)
+    {
+        Context ctx("When creating a P->DP nonleptonic amplitude");
+
+        std::shared_ptr<NonleptonicAmplitudes<PToDP>> result;
+
+        auto i = NonleptonicAmplitudeFactory<PToDP>::amplitudes.find(name);
+        if (NonleptonicAmplitudeFactory<PToDP>::amplitudes.end() != i)
+        {
+            result.reset(i->second(parameters, name.options() + options));
+            return result;
+        }
+
+        throw NoSuchNonleptonicAmplitudeError(name.prefix_part().str(), name.name_part().str());
+        return result;
+    }
+
+    OptionSpecification
+    NonleptonicAmplitudeFactory<PToDP>::option_specification(const qnp::Prefix & process)
+    {
+        std::vector<qnp::OptionValue> allowed_values;
+
+        for (const auto & ff : NonleptonicAmplitudeFactory<PToDP>::amplitudes)
+        {
+            if (process == std::get<0>(ff).prefix_part())
+            {
+                allowed_values.push_back(std::get<0>(ff).name_part().str());
+            }
+        }
+
+        return { "representation"_ok, allowed_values };
+    }
+
+    OptionSpecification
+    NonleptonicAmplitudeFactory<PToDP>::option_specification()
+    {
+        std::set<std::string> allowed_values;
+        for (const auto & ff : NonleptonicAmplitudeFactory<PToDP>::amplitudes)
         {
             allowed_values.insert(std::get<0>(ff).name_part().str());
         }

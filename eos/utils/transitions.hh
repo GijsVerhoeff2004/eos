@@ -39,6 +39,10 @@ namespace eos
     struct PToPP
     {};
 
+    /* P -> D P transitions, with D a charmed pseudoscalar */
+    struct PToDP
+    {};
+
     struct VToP
     {};
 

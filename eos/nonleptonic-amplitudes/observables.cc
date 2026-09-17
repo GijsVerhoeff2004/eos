@@ -79,6 +79,26 @@ namespace eos
 
     // }}}
 
+    // Pseudo-observables related to the P(seudoscalar) -> D(charmed pseudoscalar) P(seudoscalar) amplitudes
+    // {{{
+    ObservableGroup
+    make_p_to_d_p_amplitudes_group()
+    {
+        auto imp = new Implementation<ObservableGroup>(
+                R"(Pseudo-observables related to the $B\to DP$ amplitudes)",
+                R"()",
+                {
+                    make_nonleptonic_amplitudes_adapter("B->DP::Re{amplitude}", R"(|\mathcal{A}^{B\to DP}|)", &NonleptonicAmplitudes<PToDP>::re_amplitude, std::make_tuple()),
+                    make_nonleptonic_amplitudes_adapter("B->DP::Im{amplitude}", R"(|\mathcal{A}^{B\to DP}|)", &NonleptonicAmplitudes<PToDP>::im_amplitude, std::make_tuple()),
+                    make_nonleptonic_amplitudes_adapter("B->DP::Abs{amplitude}", R"(|\mathcal{A}^{B\to DP}|)", &NonleptonicAmplitudes<PToDP>::abs_amplitude, std::make_tuple()),
+                    make_nonleptonic_amplitudes_adapter("B->DP::Arg{amplitude}", R"(|\mathcal{A}^{B\to DP}|)", &NonleptonicAmplitudes<PToDP>::arg_amplitude, std::make_tuple()),
+                });
+
+        return ObservableGroup(imp);
+    }
+
+    // }}}
+
     ObservableSection
     make_nonleptonic_amplitudes_section()
     {
@@ -87,6 +107,8 @@ namespace eos
                                                          {
                                                              // P -> PP amplitudes
                                                              make_p_to_p_p_amplitudes_group(),
+                                                             // P -> DP amplitudes
+                                                             make_p_to_d_p_amplitudes_group(),
                                                          });
 
         return ObservableSection(imp);

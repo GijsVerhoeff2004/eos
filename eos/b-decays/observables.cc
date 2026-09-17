@@ -20,6 +20,7 @@
  */
 
 #include <eos/b-decays/b-to-3l-nu.hh>
+#include <eos/b-decays/b-to-d-psd.hh>
 #include <eos/b-decays/b-to-gamma-l-nu.hh>
 #include <eos/b-decays/b-to-l-nu.hh>
 #include <eos/b-decays/b-to-pi-pi-l-nu.hh>
@@ -4904,6 +4905,180 @@ namespace eos
 
     // }}}
 
+    // Observables related to the B -> D(charmed pseudoscalar) P(seudoscalar) decays
+    // {{{
+    ObservableGroup
+    make_nonleptonic_b_to_d_p_group()
+    {
+        auto imp = new Implementation<ObservableGroup>(R"(Observables related to the $B\to DP$ decays)",
+                                                       R"()",
+                                                       {
+                                                           make_observable("B^-->D^0pi^-::BR",
+                                                                           R"(\mathcal{B}(B^-\to D^0\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "u"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^-->D^0pi^-::BR_avg",
+                                                                           R"(\bar{\mathcal{B}}(B^-\to D^0\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::avg_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "u"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^-->D^0pi^-::BR_exp",
+                                                                           R"(\mathcal{B}_\mathrm{exp}(B^-\to D^0\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::exp_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "u"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^-->D^0pi^-::A_CP",
+                                                                           R"(A^\mathrm{dir}_\mathrm{CP}(B^-\to D^0\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::cp_asymmetry,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "u"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+pi^-::BR",
+                                                                           R"(\mathcal{B}(\bar{B}^0\to D^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+pi^-::BR_avg",
+                                                                           R"(\bar{\mathcal{B}}(\bar{B}^0\to D^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::avg_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+pi^-::BR_exp",
+                                                                           R"(\mathcal{B}_\mathrm{exp}(\bar{B}^0\to D^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::exp_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+pi^-::A_CP",
+                                                                           R"(A^\mathrm{dir}_\mathrm{CP}(\bar{B}^0\to D^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::cp_asymmetry,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^0pi^0::BR",
+                                                                           R"(\mathcal{B}(\bar{B}^0\to D^0\pi^0))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^0"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^0pi^0::BR_avg",
+                                                                           R"(\bar{\mathcal{B}}(\bar{B}^0\to D^0\pi^0))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::avg_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^0"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^0pi^0::BR_exp",
+                                                                           R"(\mathcal{B}_\mathrm{exp}(\bar{B}^0\to D^0\pi^0))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::exp_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^0"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^0pi^0::A_CP",
+                                                                           R"(A^\mathrm{dir}_\mathrm{CP}(\bar{B}^0\to D^0\pi^0))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::cp_asymmetry,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "u"_ov },   { "P"_ok, "pi^0"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+K^-::BR",
+                                                                           R"(\mathcal{B}(\bar{B}^0\to D^+K^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov }, { "P"_ok, "Kbar_u"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+K^-::BR_avg",
+                                                                           R"(\bar{\mathcal{B}}(\bar{B}^0\to D^+K^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::avg_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov }, { "P"_ok, "Kbar_u"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+K^-::BR_exp",
+                                                                           R"(\mathcal{B}_\mathrm{exp}(\bar{B}^0\to D^+K^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::exp_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov }, { "P"_ok, "Kbar_u"_ov } }
+                                                                           ),
+
+                                                           make_observable("B^0->D^+K^-::A_CP",
+                                                                           R"(A^\mathrm{dir}_\mathrm{CP}(\bar{B}^0\to D^+K^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::cp_asymmetry,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "d"_ov }, { "D"_ok, "d"_ov }, { "P"_ok, "Kbar_u"_ov } }
+                                                                           ),
+
+                                                           make_observable("B_s^0->D_s^+pi^-::BR",
+                                                                           R"(\mathcal{B}(\bar{B}_s^0\to D_s^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "s"_ov }, { "D"_ok, "s"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B_s^0->D_s^+pi^-::BR_avg",
+                                                                           R"(\bar{\mathcal{B}}(\bar{B}_s^0\to D_s^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::avg_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "s"_ov }, { "D"_ok, "s"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B_s^0->D_s^+pi^-::BR_exp",
+                                                                           R"(\mathcal{B}_\mathrm{exp}(\bar{B}_s^0\to D_s^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::exp_branching_ratio,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "s"_ov }, { "D"_ok, "s"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+
+                                                           make_observable("B_s^0->D_s^+pi^-::A_CP",
+                                                                           R"(A^\mathrm{dir}_\mathrm{CP}(\bar{B}_s^0\to D_s^+\pi^-))",
+                                                                           Unit::None(),
+                                                                           &BToDPseudoscalar::cp_asymmetry,
+                                                                           std::make_tuple(),
+                                                                           { { "q"_ok, "s"_ov }, { "D"_ok, "s"_ov },   { "P"_ok, "pi^-"_ov } }
+                                                                           ),
+        });
+
+        return ObservableGroup(imp);
+    }
+
+    // }}}
+
     ObservableSection
     make_b_decays_section()
     {
@@ -4955,6 +5130,9 @@ namespace eos
 
                                                              // nonleptonic B -> PP decays
                                                              make_nonleptonic_b_to_p_p_group(),
+
+                                                             // nonleptonic B -> DP decays
+                                                             make_nonleptonic_b_to_d_p_group(),
 
                                                              // B-meson lifetime
                                                              make_b_lifetime_group(),
